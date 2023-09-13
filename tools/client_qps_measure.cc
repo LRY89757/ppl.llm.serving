@@ -241,7 +241,7 @@ int main(int argc, char const* argv[]) {
 
     fprintf(stderr, "[RESULT] benchmark time: %.2f s\n", benchmark_time);
 
-    // 统计: avg inptu len, avg gen len, task num, total gen tokens
+    // 统计: avg input len, avg gen len, task num, total gen tokens
     fprintf(stderr, "[RESULT] request count: %d\n", num_request);
     fprintf(stderr, "[RESULT] avg input len: %d, total input len: %d\n", total_input_tokens / num_request,
             total_input_tokens);
