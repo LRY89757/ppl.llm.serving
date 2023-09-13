@@ -1,8 +1,8 @@
 {
-    "model_dir":  "/data1/wjh/projects/llama/llama-2-7b/llama_7b_ppl/",
-    "model_param_path": "/data1/wjh/projects/llama/llama-2-7b/llama_7b_ppl/params.json",
+    "model_dir":  "/home/ubuntu/projects/llama/llama-2-7b/llama_7b_ppl/",
+    "model_param_path": "/home/ubuntu/projects/llama/llama-2-7b/llama_7b_ppl/params.json",
 
-    "tokenizer_path": "/data1/wjh/projects/llama/tokenizer.model",
+    "tokenizer_path": "/home/ubuntu/projects/llama/tokenizer.model",
 
     "tensor_parallel_size": 1,
 
