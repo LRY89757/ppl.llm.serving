@@ -2,3 +2,5 @@ __pycache__
 .vscode/
 deps/
 ppl-build/
+*.log
+ShareGPT_V3_unfiltered_cleaned_split.json

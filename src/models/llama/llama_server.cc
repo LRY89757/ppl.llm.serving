@@ -165,14 +165,56 @@ static bool ParseServerConfig(const string& config_file, ServerConfig* server_co
 }
 
 static bool ParseModelConfig(const string& model_param_path, ModelConfig* model_config) {
-    ifstream ifs(model_param_path);
-    rapidjson::IStreamWrapper isw(ifs);
+    // ifstream ifs(model_param_path);
+    // rapidjson::IStreamWrapper isw(ifs);
+    // rapidjson::Document document;
+    // if (document.ParseStream(isw) == false) {
+    //     LOG(ERROR) << "ParseStream failed";
+    //     return false;
+    // }
+    // document.ParseStream(isw);
+        // ifstream ifs(model_param_path);
+
+    // // std::string line;
+    // // std::cout<<"hello"<<std::endl;
+    // // while (std::getline(ifs, line)) {
+    // //     std::cout << line << std::endl; // 将每一行打印到标准输出
+    // // }
+
+    // rapidjson::IStreamWrapper isw(ifs);
+    // rapidjson::Document document;
+    // if (document.ParseStream(isw) == false) {
+    //     LOG(ERROR) << "ParseStream failed";
+    //     return false;
+    // }
+    // document.ParseStream(isw);
+
+    // std::cout<<model_param_path<<std::endl;
+    // std::cout<<document.IsNull()<<std::endl;
+
+    // for (rapidjson::Value::ConstMemberIterator itr = document.MemberBegin(); itr != document.MemberEnd(); itr++)
+    // {
+    //     rapidjson::Value jKey;
+    //     rapidjson::Value jValue;
+    //     rapidjson::Document::AllocatorType allocator;
+    //     jKey.CopyFrom(itr->name, allocator);
+    //     jValue.CopyFrom(itr->value, allocator);
+    //     if (jKey.IsString())
+    //     {
+    //         string name = jKey.GetString();
+    //         printf("\r\nname: %s\r\n", name.c_str());
+    //     }
+
+    //     if (jValue.IsString())
+    //     {
+    //         std::cout << "jValue" << jValue.GetString() << std::endl;
+    //     }
+    // }
+
+    std::string data = "{\"hidden_dim\": 4096, \"intermediate_dim\": 11008, \"num_layers\": 32, \"num_heads\": 32, \"num_kv_heads\": 32, \"vocab_size\": 32000, \"norm_eps\": 1e-05, \"cache_quant_bit\": 8, \"cache_quant_group\": 8, \"cache_layout\": 0, \"cache_mode\": 0, \"dynamic_batching\": true, \"auto_causal\": true}";
+
     rapidjson::Document document;
-    if (document.ParseStream(isw) == false) {
-        LOG(ERROR) << "ParseStream failed";
-        return false;
-    }
-    document.ParseStream(isw);
+    document.Parse(data.data());
 
     auto it = document.FindMember("num_heads");
     if (it == document.MemberEnd()) {

@@ -23,6 +23,16 @@ Convert through our pmx, following [guide](https://github.com/openppl-public/ppl
     --fused_qkv 1 --fused_kvcache 1 --auto_causal 1 \
     --quantized_cache 1 --dynamic_batching 1 
     ```
+
+    ```
+    OMP_NUM_THREADS=${MP} torchrun --nproc_per_node ${MP} \
+    Export.py --ckpt_dir /data1/wjh/projects/llama/llama-2-7b/ \
+    --tokenizer_path /data1/wjh/projects/llama/tokenizer.model \
+    --export_path /data1/wjh/projects/llama/llama-2-7b/llama_7b_ppl/ \
+    --fused_qkv 1 --fused_kvcache 1 --auto_causal 1 \
+    --quantized_cache 1 --dynamic_batching 1 
+    ```
+
 Differenct model require different MP values, for llama_7b `MP=1`.
 | MP                   | value |
 |----------------------|-------|

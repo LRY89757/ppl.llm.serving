@@ -30,6 +30,7 @@
 
     ```bash
     ./build.sh -DPPLNN_USE_LLM_CUDA=ON -DPPLNN_CUDA_ENABLE_NCCL=ON -DPPLNN_ENABLE_CUDA_JIT=OFF -DPPLNN_CUDA_ARCHITECTURES="'80;86;87'" -DPPLCOMMON_CUDA_ARCHITECTURES="'80;86;87'"
+    ./build.sh -DPPLNN_USE_LLM_CUDA=ON -DPPLNN_CUDA_ENABLE_NCCL=ON -DPPLNN_ENABLE_CUDA_JIT=OFF -DPPLNN_CUDA_ARCHITECTURES="'80;86'" -DPPLCOMMON_CUDA_ARCHITECTURES="'80;86'"
     ```
 
     NCCL is required if multiple GPU devices are used.
@@ -61,6 +62,8 @@
 
     ```bash
     ./ppl-build/client_qps_measure 127.0.0.1:23333 /path/to/tokenizer/path tools/samples_1024.json
+
+    ./ppl-build/client_qps_measure 127.0.0.1:23333 /data1/wjh/projects/llama/llama-2-7b/checklist.chk tools/samples_1024.json
     ```
     See [tools/client_qps_measure.cc](tools/client_qps_measure.cc) for more details.
 
