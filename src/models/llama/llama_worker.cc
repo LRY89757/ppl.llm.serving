@@ -853,7 +853,13 @@ void LLaMAWorker::Process(const shared_ptr<Request>& req, Connection* conn) {
     lreq->uuid = uuid_seq_++;
     lreq->conn = conn;
     lreq->orig = req;
-    tokenizer_->Encode(req->prompt.data(), req->prompt.size(), &lreq->token_id_list);
+    // tokenizer_->Encode(req->prompt.data(), req->prompt.size(), &lreq->token_id_list);
+    
+    // test the latency
+    // tokenizer_->Encode(req->prompt.data(), req->prompt.size(), &lreq->token_id_list);
+    lreq->token_id_list.assign(std::atoi(req->prompt.data()), 0);
+
+
 
     pthread_mutex_lock(&uuid_data_lock_);
     uuid_data_.insert(make_pair(lreq->uuid, UuidData(req->id, conn)));

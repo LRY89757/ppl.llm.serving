@@ -89,6 +89,7 @@ public:
         }
         pthread_mutex_lock(&lock);
         while (finished_cnt < num_request) {
+            LOG(INFO) << "finishing";
             pthread_cond_wait(&finished_cond, &lock);
         }
         pthread_mutex_unlock(&lock);

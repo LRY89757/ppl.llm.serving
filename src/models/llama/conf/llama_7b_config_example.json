@@ -1,5 +1,5 @@
 {
-    "model_dir":  "/home/ubuntu/projects/llama/llama-2-7b/llama_7b_ppl/",
+    "model_dir":  "/home/ubuntu/projects/llama/llama-2-7b/llama_7b_ppl",
     "model_param_path": "/home/ubuntu/projects/llama/llama-2-7b/llama_7b_ppl/params.json",
 
     "tokenizer_path": "/home/ubuntu/projects/llama/tokenizer.model",
