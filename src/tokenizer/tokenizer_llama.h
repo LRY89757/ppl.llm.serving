@@ -1,7 +1,7 @@
-#ifndef __PPL_LLM_INTERNLM_TOKENIZER_H__
-#define __PPL_LLM_INTERNLM_TOKENIZER_H__
+#ifndef __PPL_LLM_TOKENIZER_LLAMA_H__
+#define __PPL_LLM_TOKENIZER_LLAMA_H__
 
-#include "utils/tokenizer.h"
+#include "tokenizer/tokenizer.h"
 #include "ppl/nn/common/logger.h"
 #include <sentencepiece_processor.h>
 
@@ -9,7 +9,7 @@
 
 namespace ppl { namespace llm {
 
-class InternLmTokenizer final : public utils::Tokenizer {
+class LlamaTokenizer final : public Tokenizer {
 public:
     ppl::common::RetCode Init(const std::string& path) {
         auto tokenizer_status = sp_processor_.Load(path);

@@ -91,9 +91,9 @@ static void FindUData(unordered_map<uint64_t, LLaMAWorker::UuidData>* uuid_data,
 class DecodeAndSendTask final {
 public:
     // range is [start_id, end_id)
-    DecodeAndSendTask(uint32_t start_id, uint32_t end_id, const utils::Tokenizer* tokenizer,
+    DecodeAndSendTask(uint32_t start_id, uint32_t end_id, const Tokenizer* tokenizer,
                       unordered_map<uint64_t, LLaMAWorker::UuidData>* uuid_data, pthread_mutex_t* uuid_data_lock,
-                      std::vector<TidGenToken>* tid_gen_token_list,
+                      std::vector<TidGenToken>* tid_gen_token_list, pthread_mutex_t* decoder_lock,
                       pthread_mutex_t* tid_shutdown_lock, unordered_set<uint64_t>* tid_shutdown)
         : start_id_(start_id)
         , end_id_(end_id)
@@ -101,6 +101,7 @@ public:
         , uuid_data_(uuid_data)
         , uuid_data_lock_(uuid_data_lock)
         , tid_gen_token_list_(tid_gen_token_list)
+        , decoder_lock_(decoder_lock)
         , tid_shutdown_lock_(tid_shutdown_lock)
         , tid_shutdown_(tid_shutdown) {}
 
@@ -129,16 +130,19 @@ public:
                 }
             }
         }
+        pthread_mutex_unlock(decoder_lock_);
+
         return RC_SUCCESS;
     }
 
 private:
     uint32_t start_id_;
     uint32_t end_id_;
-    const utils::Tokenizer* tokenizer_;
+    const Tokenizer* tokenizer_;
     unordered_map<uint64_t, LLaMAWorker::UuidData>* uuid_data_;
     pthread_mutex_t* uuid_data_lock_;
     std::vector<TidGenToken>* tid_gen_token_list_;
+    pthread_mutex_t* decoder_lock_;
     pthread_mutex_t* tid_shutdown_lock_;
     unordered_set<uint64_t>* tid_shutdown_;
 };
@@ -362,10 +366,13 @@ LLaMAWorker::LLaMAWorker(const Resource& resource, const ModelConfig& mconfig, c
         arg->kv_cache->SetBufferPtr(arg->resource->kv_cache_mem);
         arg->kv_scale->SetBufferPtr(arg->resource->kv_scale_mem);
     }
+
+    pthread_mutex_init(&decoder_lock_, nullptr);
 }
 
 LLaMAWorker::~LLaMAWorker() {
     pthread_mutex_destroy(&uuid_data_lock_);
+    pthread_mutex_destroy(&decoder_lock_);
 
     if (worker_thread_created_) {
         pthread_cancel(worker_thread_);
@@ -386,7 +393,6 @@ RetCode LLaMAWorker::Init() {
         LOG(ERROR) << "Init decoder thread pool error";
         return RC_OTHER_ERROR;
     }
-    decoder_barrier_.Reset(DECODER_THREAD_NUM + 1);
 
     pthread_cond_init(&req_signal_, nullptr);
     auto err = pthread_create(&worker_thread_, nullptr, WorkerThreadFunc, this);
@@ -768,11 +774,7 @@ void LLaMAWorker::Work() {
         // send stream chat rsp
         {
             utils::TimingGuard __timing__(&profiler.step_send_duration);
-            if (is_first_run_) {
-                is_first_run_ = false;
-            } else {
-                decoder_barrier_.Wait();
-            }
+            pthread_mutex_lock(&decoder_lock_);
             tid_gen_token_list_.clear();
             for (int task_iter = 0; task_iter < running_batch; ++task_iter) {
                 auto* tid_ctrl = worker_controller_.tid_list[task_iter];
@@ -811,9 +813,8 @@ void LLaMAWorker::Work() {
 
                 auto task =
                     DecodeAndSendTask(start_id, end_id, tokenizer_, &uuid_data_, &uuid_data_lock_, &tid_gen_token_list_,
-                                      &tid_shutdown_lock_, &worker_controller_.tid_shutdown);
+                                      &decoder_lock_, &tid_shutdown_lock_, &worker_controller_.tid_shutdown);
                 task.Process();
-                decoder_barrier_.Wait();
             });
         }
         profiler.send_duration += profiler.step_send_duration;
@@ -853,7 +854,11 @@ void LLaMAWorker::Process(const shared_ptr<Request>& req, Connection* conn) {
     lreq->uuid = uuid_seq_++;
     lreq->conn = conn;
     lreq->orig = req;
-    tokenizer_->Encode(req->prompt.data(), req->prompt.size(), &lreq->token_id_list);
+    // tokenizer_->Encode(req->prompt.data(), req->prompt.size(), &lreq->token_id_list);
+    
+    // test the latency
+    // tokenizer_->Encode(req->prompt.data(), req->prompt.size(), &lreq->token_id_list);
+    lreq->token_id_list.assign(std::atoi(req->prompt.data()), 0);
 
     pthread_mutex_lock(&uuid_data_lock_);
     uuid_data_.insert(make_pair(lreq->uuid, UuidData(req->id, conn)));
