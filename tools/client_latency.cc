@@ -135,33 +135,33 @@ int main(int argc, char** argv) {
     int std_output_len = 128;
 
     std::map<std::string, std::vector<int>> all_x_axis = {
-        // {"batch size", {2, 4, 8, 16, 32, 64, 128, 256, 512}},
-        {"input lens", {32, 64, 128, 256, 512, 1024, 2048, 4096, 8192}},
-        // {"output lens", {128, 256, 512, 1024, 2048, 4096, 8192}}
+        {"batch size", {2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048}},
+        {"input lens", {32, 64, 128, 256, 512, 1024, 2048}},
+        {"output lens", {128, 256, 512, 1024, 2048, 4096}}
     };
 
     std::vector<std::tuple<int, int, int>> batch_sizes;
     std::vector<std::tuple<int, int, int>> input_lens;
     std::vector<std::tuple<int, int, int>> output_lens;
 
-    // for (int item : all_x_axis["batch size"]) {
-    //     batch_sizes.push_back(std::make_tuple(item, std_inputlen, std_output_len));
-    // }
+    for (int item : all_x_axis["batch size"]) {
+        batch_sizes.push_back(std::make_tuple(item, std_inputlen, std_output_len));
+    }
 
     for (int item : all_x_axis["input lens"]) {
         input_lens.push_back(std::make_tuple(std_bsz, item, std_output_len));
     }
 
-    // for (int item : all_x_axis["output lens"]) {
-        // output_lens.push_back(std::make_tuple(std_bsz, std_inputlen, item));
-    // }
+    for (int item : all_x_axis["output lens"]) {
+        output_lens.push_back(std::make_tuple(std_bsz, std_inputlen, item));
+    }
 
     std::map<std::string, std::vector<std::tuple<int, int, int, double>>> latency_dict;
 
     std::map<std::string, std::vector<std::tuple<int, int, int>>> metrics = {
-        // {"batch size", batch_sizes},
+        {"batch size", batch_sizes},
         {"input lens", input_lens},
-        // {"output lens", output_lens}
+        {"output lens", output_lens}
     };
 
     for (const auto& kv : metrics) {
@@ -183,7 +183,8 @@ int main(int argc, char** argv) {
             latency_dict[k].push_back(std::make_tuple(bsz, in_len, out_len, latencies.back()));
 
             // Write data to a JSON file
-            std::ofstream json_file("/home/ubuntu/projects/fork/latency.json");
+            std::ofstream json_file("/root/projects/ppl.llm.serving/latency.json");
+            // std::ofstream json_file("/root/projects/ppl.llm.serving/latency.json", std::ios::app);
             json_file << "{\n";
             for (const auto& entry : latency_dict) {
                 json_file << "    \"" << entry.first << "\": [\n";

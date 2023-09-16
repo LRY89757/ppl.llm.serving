@@ -401,7 +401,7 @@ int main(int argc, char const* argv[]) {
     throughput_dict["request rate"].Accept(writer);
 
     // Save results to JSON file using RapidJSON
-    std::ofstream json_file(std::string("/home/ubuntu/projects/ppl.llm.serving/throughput") + rqs_str + ".json");
+    std::ofstream json_file(std::string("/root/projects/ppl.llm.serving/throughput") + rqs_str + ".json");
     json_file << buffer.GetString();
     json_file.close();
 
