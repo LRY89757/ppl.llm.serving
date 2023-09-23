@@ -5,6 +5,7 @@ option(PPL_LLM_ENABLE_GRPC_SERVING "" ON)
 option(PPL_LLM_ENABLE_LLAMA "" ON)
 option(PPL_LLM_ENABLE_PROFILING "" ON)
 option(PPL_LLM_ENABLE_DEBUG "" OFF)
+option(PPL_LLM_SERVING_BUILD_TOOLS "" ON)
 
 # --------------------------------------------------------------------------- #
 
@@ -64,8 +65,8 @@ if(TARGET libprotobuf)
 endif()
 
 # pplnn after serving, depends on libprotobuf provided by grpc
+set(PPLNN_BUILD_TOOLS OFF)
 hpcc_populate_dep(ppl.nn.llm)
-# hpcc_populate_dep(pplnn)
 
 # --------------------------------------------------------------------------- #
 
@@ -76,11 +77,10 @@ endif()
 
 # --------------------------------------------------------------------------- #
 
-# llama after serving and pplnn, depends on libprotobuf
-if(PPL_LLM_ENABLE_LLAMA)
-    include(cmake/llama.cmake)
-endif()
+include(cmake/llm.cmake)
 
 # --------------------------------------------------------------------------- #
 
-include(tools/CMakeLists.txt)
+if(PPL_LLM_SERVING_BUILD_TOOLS)
+    include(tools/CMakeLists.txt)
+endif()
