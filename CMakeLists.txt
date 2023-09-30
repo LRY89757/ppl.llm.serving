@@ -4,7 +4,7 @@ project(ppl.llm.serving)
 option(PPL_LLM_ENABLE_GRPC_SERVING "" ON)
 option(PPL_LLM_ENABLE_LLAMA "" ON)
 option(PPL_LLM_ENABLE_PROFILING "" ON)
-option(PPL_LLM_ENABLE_DEBUG "" OFF)
+option(PPL_LLM_ENABLE_DEBUG "" ON)
 option(PPL_LLM_SERVING_BUILD_TOOLS "" ON)
 
 # --------------------------------------------------------------------------- #
