@@ -53,7 +53,7 @@ static vector<string> prompts = {
 };
 
 int Parse_Prompt(std::vector<std::string>& lines) {
-    std::string file_name("/data1/wjh/projects/ppl.llm.serving/tools/samples.txt");
+    std::string file_name("tools/samples.txt");
     std::ifstream file(file_name); // Open the file
     if (!file.is_open()) {
         std::cerr << "Unable to open the file" << std::endl;
@@ -213,6 +213,7 @@ int main(int argc, char const* argv[]) {
     for (size_t i = 0; i < prompts.size(); ++i) {
         request_list.push_back(std::make_shared<Request>(i, prompts[i], 1.0, 64));
     }
+    LOG(INFO) << "request numbers: " << request_list.size();
 
     std::shared_ptr<RequestProcessor> llm_worker;
     if (server_config.model_type == "llama") {

@@ -1,0 +1,22 @@
+{
+    "model_type": "llama",
+
+    "model_dir":  "/root/projects/llama/llama-2-7b/llama_7b_ppl/",
+    "model_param_path": "/root/projects/llama/llama-2-7b/llama_7b_ppl/params.json",
+
+    "tokenizer_path": "/root/projects/llama/tokenizer.model",
+
+    "tensor_parallel_size": 1,
+
+    "top_p": 0.0,
+    "top_k": 1,
+
+    "max_tokens_scale": 0.94,
+    "max_tokens_per_request": 4096,
+    "max_running_batch": 1024,
+    "max_tokens_per_step": 8192,
+
+    "host": "0.0.0.0",
+    "port": 23333
+}
+
