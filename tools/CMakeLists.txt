@@ -2,7 +2,7 @@ add_executable(offline_inference tools/offline_inference.cc)
 target_include_directories(offline_inference PRIVATE ${HPCC_DEPS_DIR}/rapidjson/include)
 target_link_libraries(offline_inference ppl_llm_static)
 
-add_executable(offline_inference_demo tools/offline_inference.cc)
+add_executable(offline_inference_demo tools/offline_inference_demo.cc)
 target_include_directories(offline_inference_demo PRIVATE ${HPCC_DEPS_DIR}/rapidjson/include)
 target_link_libraries(offline_inference_demo ppl_llm_static)
 

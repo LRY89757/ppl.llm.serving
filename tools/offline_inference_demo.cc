@@ -52,13 +52,16 @@ const static vector<string> prompts = {
 };
 
 int Parse_Prompt(std::vector<std::string>& lines) {
-    std::ifstream file("/data1/wjh/projects/ppl.llm.serving/tools/samples.txt"); // Open the file
+    std::string file_name("/data1/wjh/projects/ppl.llm.serving/tools/samples.txt")
+    std::ifstream file(file_name); // Open the file
     if (!file.is_open()) {
         std::cerr << "Unable to open the file" << std::endl;
         return 1;
     }
 
     std::vector<std::string> lines; // Store each line from the file
+
+    LOG(INFO) << "log from the file" << file_name;
 
     std::string line;
     while (std::getline(file, line)) {
@@ -69,9 +72,9 @@ int Parse_Prompt(std::vector<std::string>& lines) {
     }
 
     // Print the read lines
-    for (const std::string& l : lines) {
-        std::cout << l << std::endl;
-    }
+    // for (const std::string& l : lines) {
+    //     std::cout << l << std::endl;
+    // }
 
     file.close(); // Close the file
     return 0;
@@ -200,6 +203,7 @@ int main(int argc, char const* argv[]) {
     resource.device_worker_pool = &resource_manager.device_worker_pool;
     resource.tokenizer = tokenizer.get();
 
+    LOG(INFO) << "Loading Prompts";
     if(Parse_Prompt(prompts)){
         LOG(INFO) << "error when loading the prompt file, use the default prompt";
     }
