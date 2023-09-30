@@ -33,6 +33,12 @@
 #include <unordered_map>
 #include <pthread.h>
 
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <vector>
+
+
 using namespace std;
 using namespace ppl::llm;
 using namespace ppl::common;
@@ -44,6 +50,32 @@ const static vector<string> prompts = {
     "The capital of France is",
     "The future of AI is",
 };
+
+int Parse_Prompt(std::vector<std::string>& lines) {
+    std::ifstream file("/data1/wjh/projects/ppl.llm.serving/tools/samples.txt"); // Open the file
+    if (!file.is_open()) {
+        std::cerr << "Unable to open the file" << std::endl;
+        return 1;
+    }
+
+    std::vector<std::string> lines; // Store each line from the file
+
+    std::string line;
+    while (std::getline(file, line)) {
+        // If the line doesn't start with '#', store it in the vector
+        if (!line.empty() && line[0] != '#') {
+            lines.push_back(line);
+        }
+    }
+
+    // Print the read lines
+    for (const std::string& l : lines) {
+        std::cout << l << std::endl;
+    }
+
+    file.close(); // Close the file
+    return 0;
+}
 
 class LocalConnection final : public Connection {
 public:
@@ -168,6 +200,9 @@ int main(int argc, char const* argv[]) {
     resource.device_worker_pool = &resource_manager.device_worker_pool;
     resource.tokenizer = tokenizer.get();
 
+    if(Parse_Prompt(prompts)){
+        LOG(INFO) << "error when loading the prompt file, use the default prompt";
+    }
     vector<std::shared_ptr<Request>> request_list;
     for (size_t i = 0; i < prompts.size(); ++i) {
         request_list.push_back(std::make_shared<Request>(i, prompts[i], 1.0, 64));

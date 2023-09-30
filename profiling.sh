@@ -1,0 +1,2 @@
+time sudo /usr/local/cuda-11.5/bin/nsys profile --force-overwrite true -o llama-7b-ppl-latency.nsys-rep ./ppl-build/offline_inference src/models/llama/conf/llama_7b_config_example.json | tee nsys-llama-7b-ppl-latency.log
+time sudo /usr/local/cuda-11.5/bin/ncu -f --set roofline -o profile_roofline --target-processes all ppl-build/offline_inference src/models/llama/conf/llama_7b_config_example.json | tee ncu-llama-7b-ppl-latency.log
