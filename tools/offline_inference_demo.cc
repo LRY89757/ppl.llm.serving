@@ -44,7 +44,8 @@ using namespace ppl::llm;
 using namespace ppl::common;
 using namespace ppl::nn;
 
-const static vector<string> prompts = {
+// const static vector<string> prompts = {
+static vector<string> prompts = {
     "Hello, my name is",
     "The president of the United States is",
     "The capital of France is",
@@ -52,14 +53,14 @@ const static vector<string> prompts = {
 };
 
 int Parse_Prompt(std::vector<std::string>& lines) {
-    std::string file_name("/data1/wjh/projects/ppl.llm.serving/tools/samples.txt")
+    std::string file_name("/data1/wjh/projects/ppl.llm.serving/tools/samples.txt");
     std::ifstream file(file_name); // Open the file
     if (!file.is_open()) {
         std::cerr << "Unable to open the file" << std::endl;
         return 1;
     }
 
-    std::vector<std::string> lines; // Store each line from the file
+    // std::vector<std::string> lines; // Store each line from the file
 
     LOG(INFO) << "log from the file" << file_name;
 
