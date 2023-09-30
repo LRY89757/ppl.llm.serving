@@ -61,6 +61,7 @@ int Parse_Prompt(std::vector<std::string>& lines) {
     }
 
     // std::vector<std::string> lines; // Store each line from the file
+    lines.clear();
 
     LOG(INFO) << "log from the file" << file_name;
 
