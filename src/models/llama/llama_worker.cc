@@ -729,11 +729,10 @@ void LLaMAWorker::Work() {
         check_res.cache_index = INT64_MAX;
         check_res.rest_iters = -1;
         check_res.first_fill_len = req.token_id_list.size();
-        check_res.max_tokens_per_step += check_res.first_fill_len;
-
         if (check_res.max_tokens_per_step > worker_config_.max_tokens_per_step) {
             return false;
         }
+        check_res.max_tokens_per_step += check_res.first_fill_len;
 
         if (check_res.first_fill_len + req.orig->generation_length > (size_t)worker_config_.max_tokens_per_request) {
             check_res.rest_iters = worker_config_.max_tokens_per_request - check_res.first_fill_len;
@@ -941,12 +940,12 @@ void LLaMAWorker::Process(const shared_ptr<Request>& req, Connection* conn) {
 void* LLaMAWorker::WorkerThreadFunc(void* arg) {
     auto worker = (LLaMAWorker*)arg;
     while (true) {
+        pthread_mutex_lock(worker->sched_.GetQueueLock());
         while (worker->sched_.GetPendingSize() == 0) {
             LOG(INFO) << "waiting for request ...";
-            pthread_mutex_lock(&worker->uuid_data_lock_);
-            pthread_cond_wait(&worker->req_signal_, &worker->uuid_data_lock_);
-            pthread_mutex_unlock(&worker->uuid_data_lock_);
+            pthread_cond_wait(&worker->req_signal_, worker->sched_.GetQueueLock());
         }
+        pthread_mutex_unlock(worker->sched_.GetQueueLock());
         worker->Work();
     }
     return nullptr;
